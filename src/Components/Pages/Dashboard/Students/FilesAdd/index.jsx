@@ -153,7 +153,6 @@ const FileAdd = ({ id }) => {
                 style={{ width: 100, height: 100, objectFit: "cover" }}
               ></Image>
             )) : <img 
-            onClick={() => imgRef.current.click()}
             className="noItem" src="/images/image.png"/>
             }
             </div>

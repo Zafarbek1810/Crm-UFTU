@@ -40,7 +40,9 @@ const DashboardHeader = ({ RefObj, setIsOpen, setOpen }) => {
       <div className="top">
         <div className="wrap">
           <div className="left">
-            <MyLink to="/" className="logo"></MyLink>
+            <span  className="logo">
+              <img src="/images/logo.svg" alt="" />
+            </span>
             <div className="menu-toggle" onClick={handleOpen}>
               <div></div>
               <div></div>

@@ -87,6 +87,10 @@ const Students = () => {
     router.push("/dashboard/student-add");
   };
 
+  const openMemo = (id) => {
+    window.open(`/dashboard/add-memo?id=${id}`, "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,top=500,left=200,width=800,height=700");
+  };
+
   const handleOk = () => {
     setConfirmLoading(true);
     StudentProvider.fileDownload(studentId, fileTypeId, isKrill)
@@ -114,6 +118,54 @@ const Students = () => {
     console.log("Clicked cancel button");
     setOpen(false);
   };
+
+  const downloadAnketa = (id) => {
+    StudentProvider.fileDownload(id, 2, true)
+      .then((res) => {
+        const blob = new Blob([res.data], {
+          type: "application/pdf",
+        });
+        const link = document.createElement("a");
+        link.href = window.URL.createObjectURL(blob);
+        link.download = "anketa.pdf";
+        link.click();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  const downloadShartnoma = (id) => {
+    StudentProvider.fileDownload(id, 1, true)
+      .then((res) => {
+        const blob = new Blob([res.data], {
+          type: "application/pdf",
+        });
+        const link = document.createElement("a");
+        link.href = window.URL.createObjectURL(blob);
+        link.download = "shartnoma.pdf";
+        link.click();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  const downloadEslatma = (id) => {
+    StudentProvider.fileDownloadEslatma(id,  true)
+      .then((res) => {
+        const blob = new Blob([res.data], {
+          type: "application/pdf",
+        });
+        const link = document.createElement("a");
+        link.href = window.URL.createObjectURL(blob);
+        link.download = "eslatma.pdf";
+        link.click();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
 
   return (
     <StudentWrapper>
@@ -162,7 +214,42 @@ const Students = () => {
                 key={index}
                 overlay={
                   <Menu>
-                    <Menu.Item key="1">
+                   <Menu.Item key="1">
+                      <Button
+                        onClick={
+                          () => {
+                            // setOpen(true);
+                            downloadAnketa(obj.id);
+                          }
+                        }
+                      >
+                        Anketa yuklash
+                      </Button>
+                    </Menu.Item>
+                    <Menu.Item key="2">
+                      <Button
+                        onClick={
+                          () => {
+                            // setOpen(true);
+                            downloadShartnoma(obj.id);
+                          }
+                        }
+                      >
+                        Shartnoma yuklash
+                      </Button>
+                    </Menu.Item>
+                    <Menu.Item key="3">
+                      <Button
+                        onClick={
+                          () => {
+                            openMemo(obj.id);
+                          }
+                        }
+                      >
+                        Eslatma yuklash
+                      </Button>
+                    </Menu.Item>
+                    <Menu.Item key="4">
                       <Button
                         onClick={() =>
                           router.push(`/dashboard/file-add?id=${obj.id}`)
@@ -171,7 +258,7 @@ const Students = () => {
                         Fayl yuklash
                       </Button>
                     </Menu.Item>
-                    <Menu.Item key="2">
+                    <Menu.Item key="5">
                       <Button
                         onClick={() =>
                           router.push(`/dashboard/student-add?id=${obj.id}`)
@@ -180,22 +267,9 @@ const Students = () => {
                         Tahrirlash
                       </Button>
                     </Menu.Item>
-                    <Menu.Item key="3">
+                    <Menu.Item key="6">
                       <Button onClick={() => handleDeleteStudent(obj)}>
                         O`chirish
-                      </Button>
-                    </Menu.Item>
-                    <Menu.Item key="4">
-                      <Button
-                        onClick={
-                          () => {
-                            setOpen(true);
-                            setStudentId(obj.id);
-                          }
-                          // router.push(`/dashboard/file-download?id=${obj.id}`)
-                        }
-                      >
-                        Anketa yuklash
                       </Button>
                     </Menu.Item>
                   </Menu>
@@ -213,7 +287,7 @@ const Students = () => {
                       router.push(`/dashboard/student-info?id=${obj.id}`)
                     }
                   >
-                    {obj.first_name} {obj.last_name}
+                    {obj.first_name} {obj.last_name} {obj.middle_name}
                   </td>
                   <td style={{ minWidth: "14%" }} className="col">
                     {obj.institution}

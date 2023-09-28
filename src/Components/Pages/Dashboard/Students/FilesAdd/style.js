@@ -115,7 +115,6 @@ const FileAddWrapper = styled.div`
       .noItem{
         width: 150px;
         height: 150px;
-        cursor: pointer;
       }
     }
   }

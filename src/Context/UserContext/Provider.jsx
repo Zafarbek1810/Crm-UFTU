@@ -4,7 +4,21 @@ import jwtDecode from "jwt-decode";
 import AuthProvider from "../../Data/AuthProvider";
 
 const Provider = ({ children }) => {
-  const [userData, setUserData] = useState({ isAuth: false, user: null });
+  const [userData, setUserData] = useState(()=>{
+    if(typeof window !== 'undefined'){
+      const token = localStorage.getItem("token");
+      const data = token && (jwtDecode(token) || null);
+      return {
+        isAuth: !!data,
+        user: data,
+      };
+    } else {
+      return {
+        isAuth: false,
+        user: null,
+      };
+    }
+  });
   const [actions] = useState({ login, logout });
   const [isDoneUserChecking, setIsDoneUserChecking] = useState(false);
 

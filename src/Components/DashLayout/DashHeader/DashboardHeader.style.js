@@ -34,7 +34,8 @@ const DashboardHeaderWrapper = styled.div`
         }
       }
       img {
-        width: 100px;
+        width: 100px !important;
+
       }
     }
 

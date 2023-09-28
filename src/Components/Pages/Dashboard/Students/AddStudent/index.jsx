@@ -12,11 +12,18 @@ import { toast } from "react-toastify";
 import { useRouter } from "next/router";
 import BackSvg from "../../../../Common/Svgs/BackSvg";
 import { PatternFormat } from "react-number-format";
+import { DatePicker } from "antd";
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+import MinLoader from "../../../../Common/MinLoader";
+dayjs.extend(customParseFormat);
+const dateFormat = "YYYY-MM-DD";
 
 const AddStudent = ({ id }) => {
   const router = useRouter();
   const { register, handleSubmit, control, reset, setValue } = useForm();
   const [loading, setLoading] = useState(false);
+  const [loader, setLoader] = useState(false);
   const [genderId, setGenderId] = useState("");
   const [sertificateTypeId, setSertificateTypeId] = useState("");
   const [universityId, setUniversityId] = useState(null);
@@ -27,6 +34,7 @@ const AddStudent = ({ id }) => {
   const [special, setSpecial] = useState([]);
   const [educationFormId, setEducationFormId] = useState(null);
   const [contactPersonId, setContactPersonId] = useState(null);
+  const [forRender, setForRender] = useState(null);
 
   useEffect(() => {
     UniversityProvider.getAllAUniversity()
@@ -49,12 +57,14 @@ const AddStudent = ({ id }) => {
   }, []);
 
   useEffect(() => {
-    if (id) {
+    setLoader(true);
+    if (router.query.id || id) {
       StudentProvider.getOneStudent(id)
         .then((res) => {
           console.log(res.data.data);
           setValue("first_name", res.data.data.first_name);
           setValue("last_name", res.data.data.last_name);
+          setValue("middle_name", res.data.data.middle_name);
           setValue("citizenship", res.data.data.citizenship);
           setValue("address", res.data.data.address);
           setValue("institution", res.data.data.institution);
@@ -67,57 +77,92 @@ const AddStudent = ({ id }) => {
           setValue("year_from", res.data.data.year_from);
           setValue("year_to", res.data.data.year_to);
           setValue(
+            "contact_person_full_name",
+            res.data.data.contact_person_full_name
+          );
+          setValue(
+            "contact_person_address",
+            res.data.data.contact_person_address
+          );
+          setValue("contact_person_phone", res.data.data.contact_person_phone);
+          setValue("contact_person_email", res.data.data.contact_person_email);
+          setValue("student_phone_number", res.data.data.student_phone_number);
+          setValue("student_email", res.data.data.student_email);
+          setValue(
             "genders",
-            res.data.data.genders === "MALE" ? optionGender[0] : optionGender[1]
+            res?.data.data.genders === "MALE" ? optionGender[0] : optionGender[1]
           );
           setValue(
             "certificateType",
-            res.data.data.certificateType === "DIPLOMA"
+            res?.data.data.certificateType === "DIPLOMA"
               ? optionSertficateType[0]
               : optionSertficateType[1]
           );
           setValue(
             "university",
-            res.data.data.university_name ===
+            res?.data.data.university_name ===
               optionUniversity.filter(
-                (item) => item.value === res.data.data.university.id
+                (item) => item.value === res?.data.data.university.id
               )[0].label
               ? optionUniversity.filter(
-                  (item) => item.value === res.data.data.university.id
+                  (item) => item.value === res?.data.data.university.id
                 )[0]
               : optionUniversity.filter(
-                  (item) => item.value === res.data.data.university.id
+                  (item) => item.value === res?.data.data.university.id
                 )[1]
           );
           setValue(
             "faculty",
-            res.data.data.faculty_name ===
+            res?.data.data.faculty_name ===
               optionFaculty.filter(
-                (item) => item.value === res.data.data.faculty.id
+                (item) => item.value === res?.data.data.faculty.id
               )[0].label
               ? optionFaculty.filter(
-                  (item) => item.value === res.data.data.faculty.id
+                  (item) => item.value === res?.data.data.faculty.id
                 )[0]
               : optionFaculty.filter(
-                  (item) => item.value === res.data.data.faculty.id
+                  (item) => item.value === res?.data.data.faculty.id
                 )[1]
           );
           setValue(
             "special",
-            res.data.data.specialty_name ===
+            res?.data.data.specialty_name ===
               optionSpecial.filter(
-                (item) => item.value === res.data.data.specialty.id
+                (item) => item.value === res?.data.data.specialty.id
               )[0].label
               ? optionSpecial.filter(
-                  (item) => item.value === res.data.data.specialty.id
+                  (item) => item.value === res?.data.data.specialty.id
                 )[0]
               : optionSpecial.filter(
-                  (item) => item.value === res.data.data.specialty.id
+                  (item) => item.value === res?.data.data.specialty.id
                 )[1]
+          );
+          setValue(
+            "educationForms",
+            res?.data.data.educationForms === "KUNDUZGI"
+              ? optionEducationForm[0]
+              : res?.data.data.educationForms === "SIRTQI"
+              ? optionEducationForm[1]
+              : optionEducationForm[2]
+          );
+          setValue(
+            "contactPerson",
+            res?.data.data.contactPerson === "MOTHER"
+              ? optionContactPerson[0]
+              : res?.data.data.contactPerson === "FATHER"
+              ? optionContactPerson[1]
+              : res?.data.data.contactPerson === "BROTHER"
+              ? optionContactPerson[2]
+              : res?.data.data.contactPerson === "SISTER"
+              ? optionContactPerson[3]
+              : optionContactPerson[4]
           );
         })
         .catch((err) => {
           console.log(err);
+        })
+        .finally(() => {
+          setLoader(false);
         });
     }
   }, [id]);
@@ -278,7 +323,9 @@ const AddStudent = ({ id }) => {
           {id ? "Talaba ma'lumotlarini o'zgartirish" : "Talaba qo'shish"}
         </h2>
       </div>
-      <form className="p-3" onSubmit={handleSubmit(onSubmitStudent)}>
+      {
+        !loader ? 
+        <form className="p-3" onSubmit={handleSubmit(onSubmitStudent)}>
         <div className="label">
           <label>Ismi</label>
           <input
@@ -295,6 +342,15 @@ const AddStudent = ({ id }) => {
             className="form-control"
             placeholder={"Familyasi"}
             {...register("last_name", { required: true })}
+          />
+        </div>
+        <div className="label">
+          <label>Otasining ismi</label>
+          <input
+            autoComplete="off"
+            className="form-control"
+            placeholder={"Otasining ismi"}
+            {...register("middle_name", { required: true })}
           />
         </div>
         <div className="label">
@@ -339,6 +395,7 @@ const AddStudent = ({ id }) => {
             name="student_phone_number"
             render={({ field: { onChange, onBlur, value } }) => (
               <PatternFormat
+              className="form-control"
                 format="+998## ### ## ##"
                 allowEmptyFormatting
                 name="student_phone_number"
@@ -352,10 +409,25 @@ const AddStudent = ({ id }) => {
         </div>
         <div className="label">
           <label>Tug`ilgan sanasi</label>
-          <input
+          {/* <input
             type="date"
             className="form-control"
             {...register("birth_date")}
+          /> */}
+
+          <Controller
+            control={control}
+            name="birth_date"
+            render={({ field: { onChange, onBlur, value, name, ref } }) => (
+              <DatePicker
+                size="small"
+                value={dayjs(value)}
+                onChange={(date, dateString) => {
+                  setValue("birth_date", dateString);
+                }}
+                {...register("birth_date", { required: true })}
+              />
+            )}
           />
         </div>
         <div className="label">
@@ -406,20 +478,36 @@ const AddStudent = ({ id }) => {
         </div>
         <div className="label">
           <label>Berilgan sanasi</label>
-          <input
-            type="date"
-            className="form-control"
-            placeholder={"Berilgan sanasi"}
-            {...register("given_date")}
+          <Controller
+            control={control}
+            name="given_date"
+            render={({ field: { onChange, onBlur, value, name, ref } }) => (
+              <DatePicker
+                size="small"
+                value={dayjs(value)}
+                onChange={(date, dateString) => {
+                  setValue("given_date", dateString);
+                }}
+                {...register("given_date", { required: true })}
+              />
+            )}
           />
         </div>
         <div className="label">
           <label>Amal qilish muddati</label>
-          <input
-            type="date"
-            className="form-control"
-            placeholder={"Amal qilish muddati"}
-            {...register("valid_date")}
+          <Controller
+            control={control}
+            name="valid_date"
+            render={({ field: { onChange, onBlur, value, name, ref } }) => (
+              <DatePicker
+                size="small"
+                value={dayjs(value)}
+                onChange={(date, dateString) => {
+                  setValue("valid_date", dateString);
+                }}
+                {...register("valid_date", { required: true })}
+              />
+            )}
           />
         </div>
         <div className="label">
@@ -504,7 +592,7 @@ const AddStudent = ({ id }) => {
               <Select
                 className="select col-3 w-100"
                 value={value}
-                placeholder="Fakultetni tanlang"
+                placeholder="Yo'nalishni tanlang"
                 options={optionSpecial}
                 onBlur={onBlur}
                 onChange={(v) => {
@@ -539,18 +627,36 @@ const AddStudent = ({ id }) => {
         </div>
         <div className="label">
           <label>O`quv davri(dan)</label>
-          <input
-            type="date"
-            className="form-control"
-            {...register("year_from")}
+          <Controller
+            control={control}
+            name="year_from"
+            render={({ field: { onChange, onBlur, value, name, ref } }) => (
+              <DatePicker
+                size="small"
+                value={dayjs(value)}
+                onChange={(date, dateString) => {
+                  setValue("year_from", dateString);
+                }}
+                {...register("year_from", { required: true })}
+              />
+            )}
           />
         </div>
         <div className="label">
           <label>O`quv davri(gacha)</label>
-          <input
-            type="date"
-            className="form-control"
-            {...register("year_to")}
+          <Controller
+            control={control}
+            name="year_to"
+            render={({ field: { onChange, onBlur, value, name, ref } }) => (
+              <DatePicker
+                size="small"
+                value={dayjs(value)}
+                onChange={(date, dateString) => {
+                  setValue("year_to", dateString);
+                }}
+                {...register("year_to", { required: true })}
+              />
+            )}
           />
         </div>
 
@@ -612,6 +718,7 @@ const AddStudent = ({ id }) => {
             name="contact_person_phone"
             render={({ field: { onChange, onBlur, value } }) => (
               <PatternFormat
+              className="form-control"
                 format="+998## ### ## ##"
                 allowEmptyFormatting
                 name="contact_person_phone"
@@ -642,6 +749,9 @@ const AddStudent = ({ id }) => {
           {id ? "O'zgartirish" : "Qo'shish"} {loading && <ButtonLoader />}
         </button>
       </form>
+      : <MinLoader/>
+      }
+      
     </AddStudentWrapper>
   );
 };

@@ -33,4 +33,23 @@ export default class StudentProvider {
                 return Promise.reject(err);
             });
     }
+
+    static async getMemo(studentId,  isCyrillic) {
+        return await client.post(`/crm/student/get-memo/{studentId}?studentId=${studentId}&isCyrillic=${isCyrillic}`,
+            {
+                headers: { 'Content-Type': 'application/pdf' }
+            }, { responseType: 'blob' })
+            .then((response) => {
+                return response;
+            }
+            ).catch((err) => {
+                return Promise.reject(err);
+            });
+    }
+
+
+    static async addMemo(studentId, body) {
+        return await client.post(`/crm/student/add-memo/${studentId}`, body);
+    }
+
 }
