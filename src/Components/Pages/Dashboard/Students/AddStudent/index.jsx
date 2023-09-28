@@ -58,9 +58,9 @@ const AddStudent = ({ id }) => {
 
   useEffect(() => {
     setLoader(true);
-    if (router.query.id || id) {
-      StudentProvider.getOneStudent(id)
-        .then((res) => {
+    StudentProvider.getOneStudent(id)
+      .then((res) => {
+        if (router.query.id || id) {
           console.log(res.data.data);
           setValue("first_name", res.data.data.first_name);
           setValue("last_name", res.data.data.last_name);
@@ -90,7 +90,10 @@ const AddStudent = ({ id }) => {
           setValue("student_email", res.data.data.student_email);
           setValue(
             "genders",
-            res?.data.data.genders === "MALE" ? optionGender[0] : optionGender[1]
+            {
+              value : res.data.data.genders,
+              label : optionGender.filter(item => item.value === res.data.data.genders)[0].label
+            }
           );
           setValue(
             "certificateType",
@@ -100,42 +103,24 @@ const AddStudent = ({ id }) => {
           );
           setValue(
             "university",
-            res?.data.data.university_name ===
-              optionUniversity.filter(
-                (item) => item.value === res?.data.data.university.id
-              )[0].label
-              ? optionUniversity.filter(
-                  (item) => item.value === res?.data.data.university.id
-                )[0]
-              : optionUniversity.filter(
-                  (item) => item.value === res?.data.data.university.id
-                )[1]
+            {
+              value : res?.data.data.university.id,
+              label : res?.data.data.university.name
+            }
           );
           setValue(
             "faculty",
-            res?.data.data.faculty_name ===
-              optionFaculty.filter(
-                (item) => item.value === res?.data.data.faculty.id
-              )[0].label
-              ? optionFaculty.filter(
-                  (item) => item.value === res?.data.data.faculty.id
-                )[0]
-              : optionFaculty.filter(
-                  (item) => item.value === res?.data.data.faculty.id
-                )[1]
+            {
+              value : res?.data.data.faculty.id,
+              label : res?.data.data.faculty.name
+            }
           );
           setValue(
             "special",
-            res?.data.data.specialty_name ===
-              optionSpecial.filter(
-                (item) => item.value === res?.data.data.specialty.id
-              )[0].label
-              ? optionSpecial.filter(
-                  (item) => item.value === res?.data.data.specialty.id
-                )[0]
-              : optionSpecial.filter(
-                  (item) => item.value === res?.data.data.specialty.id
-                )[1]
+            {
+              value : res?.data.data.specialty.id,
+              label : res?.data.data.specialty.name
+            }
           );
           setValue(
             "educationForms",
@@ -157,14 +142,14 @@ const AddStudent = ({ id }) => {
               ? optionContactPerson[3]
               : optionContactPerson[4]
           );
-        })
-        .catch((err) => {
-          console.log(err);
-        })
-        .finally(() => {
-          setLoader(false);
-        });
-    }
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      .finally(() => {
+        setLoader(false);
+      });
   }, [id]);
 
   useEffect(() => {
@@ -323,435 +308,434 @@ const AddStudent = ({ id }) => {
           {id ? "Talaba ma'lumotlarini o'zgartirish" : "Talaba qo'shish"}
         </h2>
       </div>
-      {
-        !loader ? 
+      {!loader ? (
         <form className="p-3" onSubmit={handleSubmit(onSubmitStudent)}>
-        <div className="label">
-          <label>Ismi</label>
-          <input
-            autoComplete="off"
-            className="form-control"
-            placeholder={"Ismi"}
-            {...register("first_name", { required: true })}
-          />
-        </div>
-        <div className="label">
-          <label>Familyasi</label>
-          <input
-            autoComplete="off"
-            className="form-control"
-            placeholder={"Familyasi"}
-            {...register("last_name", { required: true })}
-          />
-        </div>
-        <div className="label">
-          <label>Otasining ismi</label>
-          <input
-            autoComplete="off"
-            className="form-control"
-            placeholder={"Otasining ismi"}
-            {...register("middle_name", { required: true })}
-          />
-        </div>
-        <div className="label">
-          <label>Millati</label>
-          <input
-            autoComplete="off"
-            className="form-control"
-            placeholder={"Millati"}
-            {...register("citizenship", { required: true })}
-          />
-        </div>
-        <div className="label">
-          <label>Jinsi</label>
-          <Controller
-            control={control}
-            name="genders"
-            render={({ field: { onChange, onBlur, value, name, ref } }) => (
-              <Select
-                className="select col-3 w-100"
-                value={value}
-                placeholder="Jinsini tanlang"
-                options={optionGender}
-                onBlur={onBlur}
-                onChange={(v) => {
-                  onChange(v);
-                  setGenderId(v.value);
-                }}
-                ref={ref}
-              />
-            )}
-          />
-        </div>
-        <div className="label">
-          <label>Telefon raqami</label>
-          <Controller
-            control={control}
-            rules={{
-              required: true,
-              minLength: 16,
-              maxLength: 16,
-            }}
-            name="student_phone_number"
-            render={({ field: { onChange, onBlur, value } }) => (
-              <PatternFormat
+          <div className="label">
+            <label>Ismi</label>
+            <input
+              autoComplete="off"
               className="form-control"
-                format="+998## ### ## ##"
-                allowEmptyFormatting
-                name="student_phone_number"
-                value={value}
-                style={{ width: "100%" }}
-                onChange={onChange}
-                onBlur={onBlur}
-              />
-            )}
-          />
-        </div>
-        <div className="label">
-          <label>Tug`ilgan sanasi</label>
-          {/* <input
+              placeholder={"Ismi"}
+              {...register("first_name", { required: true })}
+            />
+          </div>
+          <div className="label">
+            <label>Familyasi</label>
+            <input
+              autoComplete="off"
+              className="form-control"
+              placeholder={"Familyasi"}
+              {...register("last_name", { required: true })}
+            />
+          </div>
+          <div className="label">
+            <label>Otasining ismi</label>
+            <input
+              autoComplete="off"
+              className="form-control"
+              placeholder={"Otasining ismi"}
+              {...register("middle_name", { required: true })}
+            />
+          </div>
+          <div className="label">
+            <label>Millati</label>
+            <input
+              autoComplete="off"
+              className="form-control"
+              placeholder={"Millati"}
+              {...register("citizenship", { required: true })}
+            />
+          </div>
+          <div className="label">
+            <label>Jinsi</label>
+            <Controller
+              control={control}
+              name="genders"
+              render={({ field: { onChange, onBlur, value, name, ref } }) => (
+                <Select
+                  className="select col-3 w-100"
+                  value={value}
+                  placeholder="Jinsini tanlang"
+                  options={optionGender}
+                  onBlur={onBlur}
+                  onChange={(v) => {
+                    onChange(v);
+                    setGenderId(v.value);
+                  }}
+                  ref={ref}
+                />
+              )}
+            />
+          </div>
+          <div className="label">
+            <label>Telefon raqami</label>
+            <Controller
+              control={control}
+              rules={{
+                required: true,
+                minLength: 16,
+                maxLength: 16,
+              }}
+              name="student_phone_number"
+              render={({ field: { onChange, onBlur, value } }) => (
+                <PatternFormat
+                  className="form-control"
+                  format="+998## ### ## ##"
+                  allowEmptyFormatting
+                  name="student_phone_number"
+                  value={value}
+                  style={{ width: "100%" }}
+                  onChange={onChange}
+                  onBlur={onBlur}
+                />
+              )}
+            />
+          </div>
+          <div className="label">
+            <label>Tug`ilgan sanasi</label>
+            {/* <input
             type="date"
             className="form-control"
             {...register("birth_date")}
           /> */}
 
-          <Controller
-            control={control}
-            name="birth_date"
-            render={({ field: { onChange, onBlur, value, name, ref } }) => (
-              <DatePicker
-                size="small"
-                value={dayjs(value)}
-                onChange={(date, dateString) => {
-                  setValue("birth_date", dateString);
-                }}
-                {...register("birth_date", { required: true })}
-              />
-            )}
-          />
-        </div>
-        <div className="label">
-          <label>Tug`ilgan joyi</label>
-          <input
-            autoComplete="off"
-            className="form-control"
-            placeholder={"Tug'ilgan joyi"}
-            {...register("place_of_birth", { required: true })}
-          />
-        </div>
-        <div className="label">
-          <label>Manzili</label>
-          <input
-            autoComplete="off"
-            className="form-control"
-            placeholder={"Manzili"}
-            {...register("address", { required: true })}
-          />
-        </div>
-        <div className="label">
-          <label>Emaili</label>
-          <input
-            autoComplete="off"
-            type="email"
-            className="form-control"
-            placeholder={"Emaili"}
-            {...register("student_email", { required: true })}
-          />
-        </div>
-        <div className="label">
-          <label>Muassasa nomi</label>
-          <input
-            autoComplete="off"
-            className="form-control"
-            placeholder={"Muassasa nomi"}
-            {...register("institution", { required: true })}
-          />
-        </div>
-        <div className="label">
-          <label>Passport raqami</label>
-          <input
-            autoComplete="off"
-            className="form-control"
-            placeholder={"Passport raqami"}
-            {...register("passport_number", { required: true })}
-          />
-        </div>
-        <div className="label">
-          <label>Berilgan sanasi</label>
-          <Controller
-            control={control}
-            name="given_date"
-            render={({ field: { onChange, onBlur, value, name, ref } }) => (
-              <DatePicker
-                size="small"
-                value={dayjs(value)}
-                onChange={(date, dateString) => {
-                  setValue("given_date", dateString);
-                }}
-                {...register("given_date", { required: true })}
-              />
-            )}
-          />
-        </div>
-        <div className="label">
-          <label>Amal qilish muddati</label>
-          <Controller
-            control={control}
-            name="valid_date"
-            render={({ field: { onChange, onBlur, value, name, ref } }) => (
-              <DatePicker
-                size="small"
-                value={dayjs(value)}
-                onChange={(date, dateString) => {
-                  setValue("valid_date", dateString);
-                }}
-                {...register("valid_date", { required: true })}
-              />
-            )}
-          />
-        </div>
-        <div className="label">
-          <label>Sertifikat turi</label>
-          <Controller
-            control={control}
-            name="certificateType"
-            render={({ field: { onChange, onBlur, value, name, ref } }) => (
-              <Select
-                className="select col-3 w-100"
-                value={value}
-                placeholder="Sertifikat turini tanlang"
-                options={optionSertficateType}
-                onBlur={onBlur}
-                onChange={(v) => {
-                  onChange(v);
-                  setSertificateTypeId(v.value);
-                }}
-                ref={ref}
-              />
-            )}
-          />
-        </div>
-        <div className="label">
-          <label>Sertifikat/Diplom raqami</label>
-          <input
-            autoComplete="off"
-            className="form-control"
-            placeholder={"Sertifikat/Diplom raqami"}
-            {...register("certificate_number", { required: true })}
-          />
-        </div>
-
-        <div className="label">
-          <label>Universitet</label>
-          <Controller
-            control={control}
-            name="university"
-            render={({ field: { onChange, onBlur, value, name, ref } }) => (
-              <Select
-                className="select col-3 w-100"
-                value={value}
-                placeholder="Universitetni tanlang"
-                options={optionUniversity}
-                onBlur={onBlur}
-                onChange={(v) => {
-                  onChange(v);
-                  setUniversityId(v.value);
-                }}
-                ref={ref}
-              />
-            )}
-          />
-        </div>
-        <div className="label">
-          <label>Fakultetlar</label>
-          <Controller
-            control={control}
-            name="faculty"
-            render={({ field: { onChange, onBlur, value, name, ref } }) => (
-              <Select
-                className="select col-3 w-100"
-                value={value}
-                placeholder="Fakultetni tanlang"
-                options={optionFaculty}
-                onBlur={onBlur}
-                onChange={(v) => {
-                  onChange(v);
-                  setFacultyId(v.value);
-                }}
-                ref={ref}
-              />
-            )}
-          />
-        </div>
-        <div className="label">
-          <label>Yo`nalish</label>
-          <Controller
-            control={control}
-            name="special"
-            render={({ field: { onChange, onBlur, value, name, ref } }) => (
-              <Select
-                className="select col-3 w-100"
-                value={value}
-                placeholder="Yo'nalishni tanlang"
-                options={optionSpecial}
-                onBlur={onBlur}
-                onChange={(v) => {
-                  onChange(v);
-                  setSpecialId(v.value);
-                }}
-                ref={ref}
-              />
-            )}
-          />
-        </div>
-        <div className="label">
-          <label>O`quv turi</label>
-          <Controller
-            control={control}
-            name="educationForms"
-            render={({ field: { onChange, onBlur, value, name, ref } }) => (
-              <Select
-                className="select col-3 w-100"
-                value={value}
-                placeholder="O`quv turini tanlang"
-                options={optionEducationForm}
-                onBlur={onBlur}
-                onChange={(v) => {
-                  onChange(v);
-                  setEducationFormId(v.value);
-                }}
-                ref={ref}
-              />
-            )}
-          />
-        </div>
-        <div className="label">
-          <label>O`quv davri(dan)</label>
-          <Controller
-            control={control}
-            name="year_from"
-            render={({ field: { onChange, onBlur, value, name, ref } }) => (
-              <DatePicker
-                size="small"
-                value={dayjs(value)}
-                onChange={(date, dateString) => {
-                  setValue("year_from", dateString);
-                }}
-                {...register("year_from", { required: true })}
-              />
-            )}
-          />
-        </div>
-        <div className="label">
-          <label>O`quv davri(gacha)</label>
-          <Controller
-            control={control}
-            name="year_to"
-            render={({ field: { onChange, onBlur, value, name, ref } }) => (
-              <DatePicker
-                size="small"
-                value={dayjs(value)}
-                onChange={(date, dateString) => {
-                  setValue("year_to", dateString);
-                }}
-                {...register("year_to", { required: true })}
-              />
-            )}
-          />
-        </div>
-
-        <h3 style={{ width: "100%", textAlign: "center", margin: "20px 0" }}>
-          Aloqa uchun shahs
-        </h3>
-
-        <div className="label">
-          <label>Kimi bo`ladi</label>
-          <Controller
-            control={control}
-            name="contactPerson"
-            render={({ field: { onChange, onBlur, value, name, ref } }) => (
-              <Select
-                className="select col-3 w-100"
-                value={value}
-                placeholder="Aloqa uchun shahsni tanlang"
-                options={optionContactPerson}
-                onBlur={onBlur}
-                onChange={(v) => {
-                  onChange(v);
-                  setContactPersonId(v.value);
-                }}
-                ref={ref}
-              />
-            )}
-          />
-        </div>
-
-        <div className="label">
-          <label>To`liq ismi</label>
-          <input
-            autoComplete="off"
-            className="form-control"
-            placeholder={"To`liq ismi"}
-            {...register("contact_person_full_name", { required: true })}
-          />
-        </div>
-
-        <div className="label">
-          <label>Manzil</label>
-          <input
-            autoComplete="off"
-            className="form-control"
-            placeholder={"Manzil"}
-            {...register("contact_person_address", { required: true })}
-          />
-        </div>
-
-        <div className="label">
-          <label>Telefon</label>
-          <Controller
-            control={control}
-            rules={{
-              required: true,
-              minLength: 16,
-              maxLength: 16,
-            }}
-            name="contact_person_phone"
-            render={({ field: { onChange, onBlur, value } }) => (
-              <PatternFormat
+            <Controller
+              control={control}
+              name="birth_date"
+              render={({ field: { onChange, onBlur, value, name, ref } }) => (
+                <DatePicker
+                  size="small"
+                  value={dayjs(value)}
+                  onChange={(date, dateString) => {
+                    setValue("birth_date", dateString);
+                  }}
+                  {...register("birth_date", { required: true })}
+                />
+              )}
+            />
+          </div>
+          <div className="label">
+            <label>Tug`ilgan joyi</label>
+            <input
+              autoComplete="off"
               className="form-control"
-                format="+998## ### ## ##"
-                allowEmptyFormatting
-                name="contact_person_phone"
-                value={value}
-                style={{ width: "100%" }}
-                onChange={onChange}
-                onBlur={onBlur}
-              />
-            )}
-          />
-        </div>
+              placeholder={"Tug'ilgan joyi"}
+              {...register("place_of_birth", { required: true })}
+            />
+          </div>
+          <div className="label">
+            <label>Manzili</label>
+            <input
+              autoComplete="off"
+              className="form-control"
+              placeholder={"Manzili"}
+              {...register("address", { required: true })}
+            />
+          </div>
+          <div className="label">
+            <label>Emaili</label>
+            <input
+              autoComplete="off"
+              type="email"
+              className="form-control"
+              placeholder={"Emaili"}
+              {...register("student_email", { required: true })}
+            />
+          </div>
+          <div className="label">
+            <label>Muassasa nomi</label>
+            <input
+              autoComplete="off"
+              className="form-control"
+              placeholder={"Muassasa nomi"}
+              {...register("institution", { required: true })}
+            />
+          </div>
+          <div className="label">
+            <label>Passport raqami</label>
+            <input
+              autoComplete="off"
+              className="form-control"
+              placeholder={"Passport raqami"}
+              {...register("passport_number", { required: true })}
+            />
+          </div>
+          <div className="label">
+            <label>Berilgan sanasi</label>
+            <Controller
+              control={control}
+              name="given_date"
+              render={({ field: { onChange, onBlur, value, name, ref } }) => (
+                <DatePicker
+                  size="small"
+                  value={dayjs(value)}
+                  onChange={(date, dateString) => {
+                    setValue("given_date", dateString);
+                  }}
+                  {...register("given_date", { required: true })}
+                />
+              )}
+            />
+          </div>
+          <div className="label">
+            <label>Amal qilish muddati</label>
+            <Controller
+              control={control}
+              name="valid_date"
+              render={({ field: { onChange, onBlur, value, name, ref } }) => (
+                <DatePicker
+                  size="small"
+                  value={dayjs(value)}
+                  onChange={(date, dateString) => {
+                    setValue("valid_date", dateString);
+                  }}
+                  {...register("valid_date", { required: true })}
+                />
+              )}
+            />
+          </div>
+          <div className="label">
+            <label>Sertifikat turi</label>
+            <Controller
+              control={control}
+              name="certificateType"
+              render={({ field: { onChange, onBlur, value, name, ref } }) => (
+                <Select
+                  className="select col-3 w-100"
+                  value={value}
+                  placeholder="Sertifikat turini tanlang"
+                  options={optionSertficateType}
+                  onBlur={onBlur}
+                  onChange={(v) => {
+                    onChange(v);
+                    setSertificateTypeId(v.value);
+                  }}
+                  ref={ref}
+                />
+              )}
+            />
+          </div>
+          <div className="label">
+            <label>Sertifikat/Diplom raqami</label>
+            <input
+              autoComplete="off"
+              className="form-control"
+              placeholder={"Sertifikat/Diplom raqami"}
+              {...register("certificate_number", { required: true })}
+            />
+          </div>
 
-        <div className="label">
-          <label>Emaili</label>
-          <input
-            autoComplete="off"
-            className="form-control"
-            placeholder={"Emaili"}
-            {...register("contact_person_email", { required: true })}
-          />
-        </div>
+          <div className="label">
+            <label>Universitet</label>
+            <Controller
+              control={control}
+              name="university"
+              render={({ field: { onChange, onBlur, value, name, ref } }) => (
+                <Select
+                  className="select col-3 w-100"
+                  value={value}
+                  placeholder="Universitetni tanlang"
+                  options={optionUniversity}
+                  onBlur={onBlur}
+                  onChange={(v) => {
+                    onChange(v);
+                    setUniversityId(v.value);
+                  }}
+                  ref={ref}
+                />
+              )}
+            />
+          </div>
+          <div className="label">
+            <label>Fakultetlar</label>
+            <Controller
+              control={control}
+              name="faculty"
+              render={({ field: { onChange, onBlur, value, name, ref } }) => (
+                <Select
+                  className="select col-3 w-100"
+                  value={value}
+                  placeholder="Fakultetni tanlang"
+                  options={optionFaculty}
+                  onBlur={onBlur}
+                  onChange={(v) => {
+                    onChange(v);
+                    setFacultyId(v.value);
+                  }}
+                  ref={ref}
+                />
+              )}
+            />
+          </div>
+          <div className="label">
+            <label>Yo`nalish</label>
+            <Controller
+              control={control}
+              name="special"
+              render={({ field: { onChange, onBlur, value, name, ref } }) => (
+                <Select
+                  className="select col-3 w-100"
+                  value={value}
+                  placeholder="Yo'nalishni tanlang"
+                  options={optionSpecial}
+                  onBlur={onBlur}
+                  onChange={(v) => {
+                    onChange(v);
+                    setSpecialId(v.value);
+                  }}
+                  ref={ref}
+                />
+              )}
+            />
+          </div>
+          <div className="label">
+            <label>O`quv turi</label>
+            <Controller
+              control={control}
+              name="educationForms"
+              render={({ field: { onChange, onBlur, value, name, ref } }) => (
+                <Select
+                  className="select col-3 w-100"
+                  value={value}
+                  placeholder="O`quv turini tanlang"
+                  options={optionEducationForm}
+                  onBlur={onBlur}
+                  onChange={(v) => {
+                    onChange(v);
+                    setEducationFormId(v.value);
+                  }}
+                  ref={ref}
+                />
+              )}
+            />
+          </div>
+          <div className="label">
+            <label>O`quv davri(dan)</label>
+            <Controller
+              control={control}
+              name="year_from"
+              render={({ field: { onChange, onBlur, value, name, ref } }) => (
+                <DatePicker
+                  size="small"
+                  value={dayjs(value)}
+                  onChange={(date, dateString) => {
+                    setValue("year_from", dateString);
+                  }}
+                  {...register("year_from", { required: true })}
+                />
+              )}
+            />
+          </div>
+          <div className="label">
+            <label>O`quv davri(gacha)</label>
+            <Controller
+              control={control}
+              name="year_to"
+              render={({ field: { onChange, onBlur, value, name, ref } }) => (
+                <DatePicker
+                  size="small"
+                  value={dayjs(value)}
+                  onChange={(date, dateString) => {
+                    setValue("year_to", dateString);
+                  }}
+                  {...register("year_to", { required: true })}
+                />
+              )}
+            />
+          </div>
 
-        <button
-          type="submit"
-          className="btn btn-success btn-rounded m-1"
-          style={{ display: "flex" }}
-        >
-          {id ? "O'zgartirish" : "Qo'shish"} {loading && <ButtonLoader />}
-        </button>
-      </form>
-      : <MinLoader/>
-      }
-      
+          <h3 style={{ width: "100%", textAlign: "center", margin: "20px 0" }}>
+            Aloqa uchun shahs
+          </h3>
+
+          <div className="label">
+            <label>Kimi bo`ladi</label>
+            <Controller
+              control={control}
+              name="contactPerson"
+              render={({ field: { onChange, onBlur, value, name, ref } }) => (
+                <Select
+                  className="select col-3 w-100"
+                  value={value}
+                  placeholder="Aloqa uchun shahsni tanlang"
+                  options={optionContactPerson}
+                  onBlur={onBlur}
+                  onChange={(v) => {
+                    onChange(v);
+                    setContactPersonId(v.value);
+                  }}
+                  ref={ref}
+                />
+              )}
+            />
+          </div>
+
+          <div className="label">
+            <label>To`liq ismi</label>
+            <input
+              autoComplete="off"
+              className="form-control"
+              placeholder={"To`liq ismi"}
+              {...register("contact_person_full_name", { required: true })}
+            />
+          </div>
+
+          <div className="label">
+            <label>Manzil</label>
+            <input
+              autoComplete="off"
+              className="form-control"
+              placeholder={"Manzil"}
+              {...register("contact_person_address", { required: true })}
+            />
+          </div>
+
+          <div className="label">
+            <label>Telefon</label>
+            <Controller
+              control={control}
+              rules={{
+                required: true,
+                minLength: 16,
+                maxLength: 16,
+              }}
+              name="contact_person_phone"
+              render={({ field: { onChange, onBlur, value } }) => (
+                <PatternFormat
+                  className="form-control"
+                  format="+998## ### ## ##"
+                  allowEmptyFormatting
+                  name="contact_person_phone"
+                  value={value}
+                  style={{ width: "100%" }}
+                  onChange={onChange}
+                  onBlur={onBlur}
+                />
+              )}
+            />
+          </div>
+
+          <div className="label">
+            <label>Emaili</label>
+            <input
+              autoComplete="off"
+              className="form-control"
+              placeholder={"Emaili"}
+              {...register("contact_person_email", { required: true })}
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="btn btn-success btn-rounded m-1"
+            style={{ display: "flex" }}
+          >
+            {id ? "O'zgartirish" : "Qo'shish"} {loading && <ButtonLoader />}
+          </button>
+        </form>
+      ) : (
+        <MinLoader />
+      )}
     </AddStudentWrapper>
   );
 };
