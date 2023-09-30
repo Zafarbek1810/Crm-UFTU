@@ -24,7 +24,7 @@ const AddMemoWrapper = styled.div`
   }
 
   .wrap__img {
-    width: 300px;
+    width: 200px;
   }
   .wrap__img img {
     width: 100%;

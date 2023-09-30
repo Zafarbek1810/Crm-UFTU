@@ -4,12 +4,30 @@ import AddMemoWrapper from "./style";
 
 const AddMemo = ({ id }) => {
   const [student, setStudent] = useState({});
+  const [loadingButton, setLoadingButton] = useState(false);
   const date = new Date();
+
 
   let day = date.getDate();
   let month = date.getMonth() + 1;
   let year = date.getFullYear();
   let currentDate = `${day}-${month}-${year}`;
+
+  useEffect(() => {
+    const body = {
+      applicationGiven: false,
+      previousEducationDocGiven: false,
+      copiesGiven: false,
+      photosGiven: false,
+      medDocumentGiven: false,
+      examinationOfEducationDocsGiven: false,
+    };
+    StudentProvider.addMemo(id, body)
+      .then((res) => {
+        console.log(res.data.data);
+      })
+      .catch((err) => console.log(err));
+  }, [id]);
 
   useEffect(() => {
     StudentProvider.getOneStudent(id)
@@ -20,17 +38,54 @@ const AddMemo = ({ id }) => {
       .catch((err) => console.log(err));
   }, [id]);
 
+  const addMemoFunc = () => {
+    const body = {
+      applicationGiven: document.getElementById("document").checked,
+      previousEducationDocGiven: document.getElementById("document2").checked,
+      copiesGiven: document.getElementById("document3").checked,
+      photosGiven: document.getElementById("document4").checked,
+      medDocumentGiven: document.getElementById("document5").checked,
+      examinationOfEducationDocsGiven:
+        document.getElementById("document6").checked,
+      otherDocumentsGiven: document.getElementById("document7").checked,
+    };
+    StudentProvider.addMemo(id, body)
+      .then((res) => {
+        console.log(res.data.data);
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const getDocument = () => {
+    setLoadingButton(true);
+    StudentProvider.getMemo(id, true)
+      .then((res) => {
+        console.log(res);
+        const blob = new Blob([res.data], {
+          type: "application/pdf",
+        });
+
+        const link = document.createElement("a");
+        link.href = window.URL.createObjectURL(blob);
+        link.download = "Memo.pdf";
+        link.click();
+      })
+      .catch((err) => console.log(err))
+      .finally(() => {
+        setLoadingButton(false);
+      });
+  };
+
+  
+
   return (
     <AddMemoWrapper>
-      <div className="wrap" style={{marginTop:"25px"}}>
+      <div className="wrap" style={{ marginTop: "25px" }}>
         <div className="container">
           <div className="wrap__content">
             <div className="wrap-title">
               <div className="wrap__img">
-                <img
-                  src="https://crm2022.rosuniversitet.com/images/logo.png"
-                  alt="Rosuniversitet"
-                />
+                <img src="/images/university.jpg" alt="Rosuniversitet" />
               </div>
               <div className="wrap__info">
                 <h1>УФА Фан ва Технологиялар Университети</h1>
@@ -79,7 +134,9 @@ const AddMemo = ({ id }) => {
                 </div>
                 <div className="wrap-text__form">
                   <h3>Қабул қилинган ҳужжатлар рўйҳати:</h3>
-                  <form>
+                  <form
+                    onSubmit={() => addMemoFunc()}
+                  >
                     <div className="item">
                       <input type="checkbox" id="document" />
                       <label for="document">Ариза</label>
@@ -92,15 +149,17 @@ const AddMemo = ({ id }) => {
                       </label>
                     </div>
                     <div className="item">
-                      <input type="checkbox" id="document3" checked="" />
-                      <label for="document2">
+                      <input type="checkbox" id="document3" />
+                      <label for="document3">
                         Нусхалар (сертификат/диплом/паспорт).
                       </label>
                     </div>
 
                     <div className="item">
-                      <input type="checkbox" id="document4" checked="" />
-                      <label for="document4">Расмлар ___ дона.</label>
+                      <input type="checkbox" id="document4" />
+                      <label for="document4">
+                        Расмлар ___ дона.
+                      </label>
                     </div>
                     <div className="item">
                       <input type="checkbox" id="document5" />
@@ -152,15 +211,12 @@ const AddMemo = ({ id }) => {
         </div>
       </div>
       <div style={{ borderTop: "2px dashed grey", margin: "25px 0" }}></div>
-      <div className="wrap">
+      {/* <div className="wrap">
         <div className="container">
           <div className="wrap__content">
             <div className="wrap-title">
               <div className="wrap__img">
-                <img
-                  src="https://crm2022.rosuniversitet.com/images/logo.png"
-                  alt="Rosuniversitet"
-                />
+                <img src="/images/university.jpg" alt="Rosuniversitet" />
               </div>
               <div className="wrap__info">
                 <h1>УФА Фан ва Технологиялар Университети</h1>
@@ -190,7 +246,7 @@ const AddMemo = ({ id }) => {
             <div className="wrap-text">
               <center>
                 <h2 style={{ margin: 0 }}>
-                Абитурийент эслатмаси № <span>{id}</span>
+                  Абитурийент эслатмаси № <span>{id}</span>
                 </h2>
               </center>
               <div className="wrap-text__desc">
@@ -280,6 +336,22 @@ const AddMemo = ({ id }) => {
             </div>
           </div>
         </div>
+      </div> */}
+
+      <div className="btns m-3 d-flex justify-content-end">
+        <button
+          onClick={() => {
+            addMemoFunc();
+            getDocument()
+          }}
+          className="btn btn-primary btn-lg"
+          disabled={loadingButton}
+        >
+          Эслатмани юклаш
+          {loadingButton && (
+            <div className="spinner-border spinner-border-sm" role="status" />
+          )}
+        </button>
       </div>
     </AddMemoWrapper>
   );

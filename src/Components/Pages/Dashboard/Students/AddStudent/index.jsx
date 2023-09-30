@@ -88,40 +88,30 @@ const AddStudent = ({ id }) => {
           setValue("contact_person_email", res.data.data.contact_person_email);
           setValue("student_phone_number", res.data.data.student_phone_number);
           setValue("student_email", res.data.data.student_email);
-          setValue(
-            "genders",
-            {
-              value : res.data.data.genders,
-              label : optionGender.filter(item => item.value === res.data.data.genders)[0].label
-            }
-          );
+          setValue("genders", {
+            value: res.data.data.genders,
+            label: optionGender.filter(
+              (item) => item.value === res.data.data.genders
+            )[0].label,
+          });
           setValue(
             "certificateType",
             res?.data.data.certificateType === "DIPLOMA"
               ? optionSertficateType[0]
               : optionSertficateType[1]
           );
-          setValue(
-            "university",
-            {
-              value : res?.data.data.university.id,
-              label : res?.data.data.university.name
-            }
-          );
-          setValue(
-            "faculty",
-            {
-              value : res?.data.data.faculty.id,
-              label : res?.data.data.faculty.name
-            }
-          );
-          setValue(
-            "special",
-            {
-              value : res?.data.data.specialty.id,
-              label : res?.data.data.specialty.name
-            }
-          );
+          setValue("university", {
+            value: res?.data.data.university.id,
+            label: res?.data.data.university.name,
+          });
+          setValue("faculty", {
+            value: res?.data.data.faculty.id,
+            label: res?.data.data.faculty.name,
+          });
+          setValue("special", {
+            value: res?.data.data.specialty.id,
+            label: res?.data.data.specialty.name,
+          });
           setValue(
             "educationForms",
             res?.data.data.educationForms === "KUNDUZGI"
@@ -393,13 +383,13 @@ const AddStudent = ({ id }) => {
           </div>
           <div className="label">
             <label>Tug`ilgan sanasi</label>
-            {/* <input
-            type="date"
-            className="form-control"
-            {...register("birth_date")}
-          /> */}
+            <input
+              type="date"
+              className="form-control"
+              {...register("birth_date")}
+            />
 
-            <Controller
+            {/* <Controller
               control={control}
               name="birth_date"
               render={({ field: { onChange, onBlur, value, name, ref } }) => (
@@ -412,7 +402,7 @@ const AddStudent = ({ id }) => {
                   {...register("birth_date", { required: true })}
                 />
               )}
-            />
+            /> */}
           </div>
           <div className="label">
             <label>Tug`ilgan joyi</label>
@@ -462,36 +452,18 @@ const AddStudent = ({ id }) => {
           </div>
           <div className="label">
             <label>Berilgan sanasi</label>
-            <Controller
-              control={control}
-              name="given_date"
-              render={({ field: { onChange, onBlur, value, name, ref } }) => (
-                <DatePicker
-                  size="small"
-                  value={dayjs(value)}
-                  onChange={(date, dateString) => {
-                    setValue("given_date", dateString);
-                  }}
-                  {...register("given_date", { required: true })}
-                />
-              )}
+            <input
+              type="date"
+              className="form-control"
+              {...register("given_date")}
             />
           </div>
           <div className="label">
             <label>Amal qilish muddati</label>
-            <Controller
-              control={control}
-              name="valid_date"
-              render={({ field: { onChange, onBlur, value, name, ref } }) => (
-                <DatePicker
-                  size="small"
-                  value={dayjs(value)}
-                  onChange={(date, dateString) => {
-                    setValue("valid_date", dateString);
-                  }}
-                  {...register("valid_date", { required: true })}
-                />
-              )}
+            <input
+              type="date"
+              className="form-control"
+              {...register("valid_date")}
             />
           </div>
           <div className="label">
@@ -611,36 +583,18 @@ const AddStudent = ({ id }) => {
           </div>
           <div className="label">
             <label>O`quv davri(dan)</label>
-            <Controller
-              control={control}
-              name="year_from"
-              render={({ field: { onChange, onBlur, value, name, ref } }) => (
-                <DatePicker
-                  size="small"
-                  value={dayjs(value)}
-                  onChange={(date, dateString) => {
-                    setValue("year_from", dateString);
-                  }}
-                  {...register("year_from", { required: true })}
-                />
-              )}
+            <input
+              type="date"
+              className="form-control"
+              {...register("year_from")}
             />
           </div>
           <div className="label">
             <label>O`quv davri(gacha)</label>
-            <Controller
-              control={control}
-              name="year_to"
-              render={({ field: { onChange, onBlur, value, name, ref } }) => (
-                <DatePicker
-                  size="small"
-                  value={dayjs(value)}
-                  onChange={(date, dateString) => {
-                    setValue("year_to", dateString);
-                  }}
-                  {...register("year_to", { required: true })}
-                />
-              )}
+            <input
+              type="date"
+              className="form-control"
+              {...register("year_to")}
             />
           </div>
 

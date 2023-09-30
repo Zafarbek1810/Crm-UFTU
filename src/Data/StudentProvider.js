@@ -35,7 +35,7 @@ export default class StudentProvider {
     }
 
     static async getMemo(studentId,  isCyrillic) {
-        return await client.post(`/crm/student/get-memo/{studentId}?studentId=${studentId}&isCyrillic=${isCyrillic}`,
+        return await client.post(`/crm/student/get-memo/${studentId}?studentId=${studentId}&isCyrillic=${isCyrillic}`,
             {
                 headers: { 'Content-Type': 'application/pdf' }
             }, { responseType: 'blob' })
@@ -51,5 +51,6 @@ export default class StudentProvider {
     static async addMemo(studentId, body) {
         return await client.post(`/crm/student/add-memo/${studentId}`, body);
     }
+
 
 }
